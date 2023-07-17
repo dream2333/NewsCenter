@@ -7,6 +7,8 @@ class Spider {
         val newsList = parser.getNewsList(meta.categorys)
         for (news in newsList) {
             news.content = parser.getContent(news.docurl)
+            println(news)
+            break
         }
     }
 }

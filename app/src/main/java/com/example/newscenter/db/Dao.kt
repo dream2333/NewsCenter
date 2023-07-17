@@ -15,9 +15,10 @@ interface UserDao {
     @Delete
     fun delete(user: User)
 
-    @Query("SELECT username FROM user")
-    fun getAll(): List<String>
+    @Query("SELECT * FROM user WHERE username = :username ")
+    fun getUser(username:String): List<User>
 }
+
 @Dao
 interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
