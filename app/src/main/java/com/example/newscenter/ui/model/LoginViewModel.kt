@@ -12,7 +12,6 @@ class LoginViewModel : ViewModel() {
     val username: StateFlow<String> = _username.asStateFlow()
     val password: StateFlow<String> = _password.asStateFlow()
     val dialogState: StateFlow<Boolean> = _dialogState.asStateFlow()
-    val dialogText = MutableStateFlow("")
     fun onNameChange(msg: String) {
         _username.value = msg
     }

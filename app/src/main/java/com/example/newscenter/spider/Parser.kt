@@ -20,7 +20,7 @@ class Parser {
         for (category in categorys) {
             val content = client.get(category.first, mapOf(), "GBK")
             val json = pattern.find(content)?.groupValues?.get(1)
-            val news = adapter.fromJson(json)
+            val news = json?.let { adapter.fromJson(it) }
             news!!.forEach {
                 it.category = category.second
             }

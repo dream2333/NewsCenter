@@ -18,15 +18,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.newscenter.db.UserDao
+import com.example.newscenter.db.App
 import com.example.newscenter.ui.model.LoginViewModel
+import com.example.newscenter.ui.view.SignUpDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginView(navController: NavHostController, model: LoginViewModel, userDao: UserDao) {
+fun LoginView(navController: NavHostController, model: LoginViewModel) {
+
+    val userDao = App.db.userDao()
     val focusManager = LocalFocusManager.current
     val username by model.username.collectAsState()
     val password by model.password.collectAsState()
@@ -84,6 +87,6 @@ fun LoginView(navController: NavHostController, model: LoginViewModel, userDao: 
         {
             Text("Login")
         }
-
+        SignUpDialog(loginViewModel = model)
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
+import com.example.newscenter.db.App
 import com.example.newscenter.db.User
 import com.example.newscenter.db.UserDao
 import com.example.newscenter.ui.model.LoginViewModel
@@ -17,10 +18,11 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SignUpDialog(loginViewModel: LoginViewModel,userDao:UserDao) {
+fun SignUpDialog(loginViewModel: LoginViewModel) {
     val dialogState by loginViewModel.dialogState.collectAsState()
     val username by loginViewModel.username.collectAsState()
     val password by loginViewModel.password.collectAsState()
+    val userDao = App.db.userDao()
     if (dialogState) {
         AlertDialog(
             onDismissRequest = {
