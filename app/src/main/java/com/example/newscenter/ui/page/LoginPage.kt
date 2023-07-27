@@ -19,7 +19,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.newscenter.db.App
-import com.example.newscenter.ui.model.LoginViewModel
+import com.example.newscenter.ui.model.AppViewModel
 import com.example.newscenter.ui.view.SignUpDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,8 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginView(navController: NavHostController, model: LoginViewModel) {
-
+fun LoginView(navController: NavHostController, model: AppViewModel) {
     val userDao = App.db.userDao()
     val focusManager = LocalFocusManager.current
     val username by model.username.collectAsState()
@@ -73,11 +72,16 @@ fun LoginView(navController: NavHostController, model: LoginViewModel) {
                     val users = userDao.getUser(username)
                     if (users.isEmpty()) {
                         model.changeDialogState()
-                    } else if (users[0].password == password) {
-                        Log.i("登录",users[0].toString())
-                        //此处需要切换回主线程
-                        withContext(Dispatchers.Main) {
-                            navController.navigate("home_page")
+                    } else {
+                        if (users[0].password == password) {
+                            Log.i("登录", users[0].toString())
+                            //此处需要切换回主线程
+                            withContext(Dispatchers.Main) {
+                                navController.navigate("home_page")
+                            }
+                        }
+                        else{
+                            model.changeDialogState()
                         }
                     }
                 }

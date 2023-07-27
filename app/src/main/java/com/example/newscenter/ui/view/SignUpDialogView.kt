@@ -10,15 +10,14 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import com.example.newscenter.db.App
 import com.example.newscenter.db.User
-import com.example.newscenter.db.UserDao
-import com.example.newscenter.ui.model.LoginViewModel
+import com.example.newscenter.ui.model.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun SignUpDialog(loginViewModel: LoginViewModel) {
+fun SignUpDialog(loginViewModel: AppViewModel) {
     val dialogState by loginViewModel.dialogState.collectAsState()
     val username by loginViewModel.username.collectAsState()
     val password by loginViewModel.password.collectAsState()

@@ -60,12 +60,15 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
-
+    // Only required if you want to use utils package
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material)
+    implementation(libs.coil.compose)
+    implementation(libs.permissionmate.compose)
     implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.accompanist.placeholder.material)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

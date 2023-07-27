@@ -9,7 +9,7 @@ class Parser {
     private val client = HttpClient()
 
 
-    fun getNewsList(categorys: List<Pair<String,String>>): List<NewsItem> {
+    fun getNewsList(categories: List<Pair<String,String>>): List<NewsItem> {
         //正则表达式提取新闻列表页的json数据
         val pattern = """data_callback[(]([\s\S]*)[)]""".toRegex()
         val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
@@ -17,14 +17,17 @@ class Parser {
         @OptIn(ExperimentalStdlibApi::class)
         val adapter = moshi.adapter<List<NewsItem>>()
         val newsList = mutableListOf<NewsItem>()
-        for (category in categorys) {
+        for (category in categories) {
             val content = client.get(category.first, mapOf(), "GBK")
             val json = pattern.find(content)?.groupValues?.get(1)
             val news = json?.let { adapter.fromJson(it) }
             news!!.forEach {
                 it.category = category.second
+                if (it.docurl!=""){
+                    newsList.add(it)
+                }
             }
-            newsList.addAll(news ?: emptyList())
+
         }
         return newsList
     }

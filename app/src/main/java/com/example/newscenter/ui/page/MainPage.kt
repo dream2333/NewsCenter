@@ -1,17 +1,16 @@
 package com.example.newscenter.ui.page
 
+
+import BottomNavigationBar
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -23,42 +22,87 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import com.example.newscenter.Navigation
-import com.example.newscenter.ui.model.LoginViewModel
+import com.example.newscenter.ui.model.AppViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage(model: LoginViewModel) {
+fun MainPage(model: AppViewModel) {
     val navController = rememberNavController()
+    var fabVisible by remember { mutableStateOf(false) }
+    var navVisible by remember { mutableStateOf(false) }
+    var liked by remember { mutableStateOf(false) }
+    navController.addOnDestinationChangedListener { _, destination, _ ->
+        fabVisible = destination.route == "news_page"
+        navVisible = destination.route == "news_page"
+    }
+    val context = LocalContext.current
     TransparentSystemBars()
     Scaffold(
         topBar = { /*标题栏*/
-            TopAppBar(title = { Text("标题") }, navigationIcon = {
-                IconButton(onClick = {  /*点击事件*/ }) {
-                    Icon(Icons.Filled.ArrowBack, "")
+            TopAppBar(title = {
+                if (!navVisible) {
+                    Text("NewsCenter")
                 }
-            })
+            },
+                navigationIcon = {
+                    if (navVisible) {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                        }
+                    }
+
+                },
+                actions = {
+                    if (navVisible) {
+                        IconButton(onClick = {
+                            liked = !liked
+                        }) {
+                            if (liked) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    contentDescription = null,
+                                    tint = Color(0xFFEF5350)
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Filled.FavoriteBorder,
+                                    contentDescription = null,
+                                    tint = Color(0xFFEF5350)
+                                )
+                            }
+                        }
+                    }
+
+                })
         },
         floatingActionButton = { /*悬浮按钮*/
-            FloatingActionButton(onClick = {
-                // Floating点击事件
-                Log.e("LM", "点击了FloatingButton")
-            }) {
-                Icon(imageVector = Icons.Filled.Share, contentDescription = "share")
+            if (fabVisible) {
+                FloatingActionButton(onClick = {
+                    val intent = Intent()
+                    intent.setAction(Intent.ACTION_SEND)
+                    intent.putExtra(Intent.EXTRA_TEXT, "TODO")
+                    intent.setType("text/plain")
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.applicationContext.startActivity(intent)
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Share, contentDescription = "share"
+                    )
+                }
             }
         },
         content = { padding ->
@@ -71,59 +115,6 @@ fun MainPage(model: LoginViewModel) {
     )
 }
 
-data class BottomNavItem(
-    val label: String,
-    val icon: ImageVector,
-    val route: String,
-)
-
-object Constants {
-    val BottomNavItems = listOf(
-        BottomNavItem(
-            label = "Home",
-            icon = Icons.Filled.Home,
-            route = "home_page"
-        ),
-        BottomNavItem(
-            label = "Favorite",
-            icon = Icons.Filled.Favorite,
-            route = "favorite_page"
-        ),
-        BottomNavItem(
-            label = "Profile",
-            icon = Icons.Filled.Person,
-            route = "login_page"
-        )
-    )
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    BottomNavigation(
-        modifier = Modifier.height(72.dp),
-        backgroundColor = Color.White,
-    ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        Constants.BottomNavItems.forEach { navItem ->
-            BottomNavigationItem(
-                selected = currentRoute == navItem.route,
-                onClick = {
-                    navController.navigate(navItem.route) {
-                        launchSingleTop = true
-                        popUpTo("home_page")
-                    }
-                },
-                icon = {
-                    Icon(imageVector = navItem.icon, contentDescription = navItem.label)
-                },
-                label = {
-                    Text(text = navItem.label)
-                },
-            )
-        }
-    }
-}
 
 @Composable
 fun TransparentSystemBars() {
