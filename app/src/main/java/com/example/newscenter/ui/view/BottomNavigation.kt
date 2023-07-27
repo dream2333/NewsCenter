@@ -34,6 +34,7 @@ data class BottomNavItem(
     val label: String,
     val icon: ImageVector,
     val route: String,
+    val color: Color
 )
 
 object Constants {
@@ -41,17 +42,20 @@ object Constants {
         BottomNavItem(
             label = "Home",
             icon = Icons.Filled.Home,
-            route = "home_page"
+            route = "home_page",
+            color = Color(0xFF303F9F)
         ),
         BottomNavItem(
             label = "Favorite",
             icon = Icons.Filled.Favorite,
-            route = "favorite_page"
+            route = "favorite_page",
+            color = Color(0xFFD32F2F)
         ),
         BottomNavItem(
             label = "Profile",
             icon = Icons.Filled.Person,
-            route = "login_page"
+            route = "login_page",
+            color = Color(0xFFC2185B)
         )
     )
 }
@@ -110,13 +114,13 @@ fun BottomNavigationBar(navController: NavController) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(imageVector = navItem.icon, contentDescription = navItem.label)
+                Icon(imageVector = navItem.icon, contentDescription = navItem.label, tint = navItem.color)
                 Spacer(Modifier.padding(top = 2.dp))
                 AnimatedVisibility(visible = navItem == selectedItem) {
                     Surface(
                         shape = CircleShape,
                         modifier = Modifier.size(5.dp),
-                        color = Color(0xFF252527)
+                        color =  navItem.color
                     ) { }
                 }
             }
