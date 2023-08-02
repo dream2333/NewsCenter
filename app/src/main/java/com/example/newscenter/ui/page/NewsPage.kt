@@ -1,6 +1,5 @@
 package com.example.newscenter.ui.page
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,13 +26,12 @@ import com.example.newscenter.ui.model.AppViewModel
 
 @Composable
 fun NewsPage(model: AppViewModel) {
-    val newsItem by model.newsContent.collectAsState()
+    val newsItem by model.currentNews.collectAsState()
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-
     ) {
         if (newsItem != null) {
             Text(
@@ -72,7 +70,6 @@ fun NewsPage(model: AppViewModel) {
                     letterSpacing = 1.sp,
                 )
             }
-
             Spacer(modifier = Modifier.padding(16.dp))
             Text(
                 text = newsItem!!.content!!,

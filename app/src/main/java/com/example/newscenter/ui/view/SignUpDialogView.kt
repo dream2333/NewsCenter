@@ -25,7 +25,7 @@ fun SignUpDialog(loginViewModel: AppViewModel) {
     if (dialogState) {
         AlertDialog(
             onDismissRequest = {
-                loginViewModel.changeDialogState()
+                loginViewModel.closeDialog()
             },
             title = { Text(text = "Sign Up") },
             //显示有关对话框目的的详细信息的文本。提供的文本样式默认为 Typography.body1
@@ -38,10 +38,10 @@ fun SignUpDialog(loginViewModel: AppViewModel) {
                 TextButton(
                     onClick = {
                         CoroutineScope(Dispatchers.IO).launch {
-                            val user = User(username,password)
-                            userDao.insertUsers(user)
+                            val user = User(username = username, password = password)
+                            userDao.insert(user)
                         }
-                        loginViewModel.changeDialogState()
+                        loginViewModel.closeDialog()
                     }
                 ) {
                     Text("Yes")
@@ -51,7 +51,7 @@ fun SignUpDialog(loginViewModel: AppViewModel) {
             dismissButton = {
                 TextButton(
                     onClick = {
-                        loginViewModel.changeDialogState()
+                        loginViewModel.closeDialog()
                     }
                 ) {
                     Text("No")

@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.example.newscenter.db.App
+import com.example.newscenter.db.News
+import com.example.newscenter.spider.NewsItem
 import com.example.newscenter.spider.Spider
 import com.example.newscenter.ui.model.AppViewModel
 import com.example.newscenter.ui.view.NewsCard
@@ -27,12 +28,22 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
         val spider = Spider()
         CoroutineScope(Dispatchers.IO).launch {
             val tempNews = spider.getNewsList().slice(0..10)
+            tempNews.forEach() {
+                val _news = News(
+                    title = it.title,
+                    source = it.source,
+                    category = it.category!!,
+                    imgurl = it.imgurl,
+                    content = it.content,
+                    time = it.time
+                )
+                App.db.newsDao().insert(_news)
+            }
             viewModel.setNews(tempNews)
             println(tempNews)
         }
     }
     LazyColumn {
-
         items(news) {
             NewsCard(
                 imgUrl = it.imgurl,
