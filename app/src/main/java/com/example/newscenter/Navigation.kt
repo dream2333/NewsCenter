@@ -9,6 +9,7 @@ import com.example.newscenter.ui.model.AppViewModel
 import com.example.newscenter.ui.page.FavoritePage
 import com.example.newscenter.ui.page.HomePage
 import com.example.newscenter.ui.page.NewsPage
+import com.example.newscenter.ui.page.UserPage
 
 @Composable
 fun Navigation(navController:NavHostController, appViewModel: AppViewModel) {
@@ -27,6 +28,9 @@ fun Navigation(navController:NavHostController, appViewModel: AppViewModel) {
         }
         composable("news_page") {
             NewsPage(appViewModel)
+        }
+        composable("user_page") {
+            UserPage(appViewModel)
         }
     }
 }

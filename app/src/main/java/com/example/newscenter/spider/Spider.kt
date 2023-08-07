@@ -1,9 +1,11 @@
 package com.example.newscenter.spider
 
+import com.example.newscenter.db.News
+
 class Spider {
     private val parser = Parser()
     private val meta = Meta()
-    fun getNewsList(): List<NewsItem> {
+    fun getNewsList(): List<News> {
         return parser.getNewsList(meta.categorys)
     }
     fun crawl() {
@@ -11,6 +13,7 @@ class Spider {
         println(newsList)
         for (news in newsList) {
             news.content = parser.getContent(news.docurl)
+            news.imgurl.replace("http://", "https://" )
             println(news)
             break
         }

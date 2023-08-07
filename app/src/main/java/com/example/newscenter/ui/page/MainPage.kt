@@ -2,6 +2,7 @@ package com.example.newscenter.ui.page
 
 
 import BottomNavigationBar
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.rememberNavController
 import com.example.newscenter.Navigation
@@ -44,7 +46,13 @@ import com.example.newscenter.ui.model.AppViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import com.example.newscenter.db.Favorite
+import com.example.newscenter.ui.view.TransparentSystemBars
+import com.example.newscenter.ui.view.WeatherView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(model: AppViewModel) {
@@ -61,6 +69,7 @@ fun MainPage(model: AppViewModel) {
         navVisible = destination.route == "news_page"
     }
     val context = LocalContext.current
+    val favorDao = App.db.favoriteDao()
     TransparentSystemBars()
     Box {
         Scaffold(
@@ -78,23 +87,55 @@ fun MainPage(model: AppViewModel) {
                         }
                     }
                 }, actions = {
-                    if (navVisible) {
+                    if (navVisible && currentUser != null) {
                         IconButton(onClick = {
-                            liked = !liked
-                            var text = ""
-                            if (liked) {
-//                                App.db.favoriteDao().insert(Favorite(userId = currentUser!!.id, newsId = currentNewsItem!!.title))
-                                text = "收藏成功"
-                            } else {
-                                text =  "取消收藏"
-                            }
+                            CoroutineScope(Dispatchers.IO).launch {
+                                if (favorDao.isUserFavor(
+                                        currentNewsItem!!.title,
+                                        currentUser!!.id
+                                    ).isEmpty()
+                                ) {
+                                    val favorite = Favorite(
+                                        userId = currentUser!!.id,
+                                        title = currentNewsItem!!.title,
+                                        source = currentNewsItem!!.source,
+                                        imgurl = currentNewsItem!!.imgurl,
+                                        time = currentNewsItem!!.time,
+                                        category = currentNewsItem!!.category!!,
+                                        content = currentNewsItem!!.content
+                                    )
+                                    favorDao.insert(favorite)
+                                    liked = true
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            "Add to favorites list successfully!",
+                                            null,
+                                            false,
+                                            SnackbarDuration.Short
+                                        )
+                                    }
+                                } else {
+                                    liked = false
+                                    favorDao.deleteByTitle(currentNewsItem!!.title)
+                                }
 
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    text, null, false, SnackbarDuration.Short
-                                )
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val temp = App.db
+                                        .favoriteDao()
+                                        .getByUserId(currentUser!!.id)
+                                    model.onFavoritesChange(temp.toMutableList())
+
+                                }
                             }
                         }) {
+                            if (currentNewsItem != null) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    liked = favorDao.isUserFavor(
+                                        currentNewsItem!!.title,
+                                        currentUser!!.id
+                                    ).isNotEmpty()
+                                }
+                            }
                             if (liked) {
                                 Icon(
                                     Icons.Filled.Favorite,
@@ -109,6 +150,9 @@ fun MainPage(model: AppViewModel) {
                                 )
                             }
                         }
+                    }
+                    if (!navVisible) {
+                        WeatherView()
                     }
 
                 })
@@ -134,7 +178,7 @@ fun MainPage(model: AppViewModel) {
                     Navigation(navController, model)
                 }
             },
-            bottomBar = { BottomNavigationBar(navController) },
+            bottomBar = { BottomNavigationBar(navController, model) },
             contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
         )
         SnackbarHost(
@@ -146,16 +190,3 @@ fun MainPage(model: AppViewModel) {
     }
 }
 
-
-@Composable
-fun TransparentSystemBars() {
-    val systemUiController = rememberSystemUiController()
-    val useDarkIcons = !isSystemInDarkTheme()
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = useDarkIcons,
-            isNavigationBarContrastEnforced = false,
-        )
-    }
-}

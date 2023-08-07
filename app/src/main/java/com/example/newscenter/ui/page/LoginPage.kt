@@ -77,9 +77,11 @@ fun LoginView(navController: NavHostController, model: AppViewModel) {
                         if (users[0].password == password) {
                             Log.i("登录成功", users[0].toString())
                             model.onUserChange(users[0])
+                            val temp = App.db.favoriteDao().getByUserId(users[0].id)
+                            model.onFavoritesChange(temp.toMutableList())
                             //此处需要切换回主线程
                             withContext(Dispatchers.Main) {
-                                navController.navigate("home_page")
+                                navController.navigate("user_page")
                             }
                         }
                         else{

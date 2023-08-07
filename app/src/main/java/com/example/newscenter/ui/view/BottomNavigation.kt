@@ -17,8 +17,10 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.newscenter.db.App
+import com.example.newscenter.ui.model.AppViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 data class BottomNavItem(
     val label: String,
@@ -37,28 +44,6 @@ data class BottomNavItem(
     val color: Color
 )
 
-object Constants {
-    val BottomNavItems = listOf(
-        BottomNavItem(
-            label = "Home",
-            icon = Icons.Filled.Home,
-            route = "home_page",
-            color = Color(0xFF303F9F)
-        ),
-        BottomNavItem(
-            label = "Favorite",
-            icon = Icons.Filled.Favorite,
-            route = "favorite_page",
-            color = Color(0xFFD32F2F)
-        ),
-        BottomNavItem(
-            label = "Profile",
-            icon = Icons.Filled.Person,
-            route = "login_page",
-            color = Color(0xFFC2185B)
-        )
-    )
-}
 
 //@Composable
 //fun BottomNavigationBar(navController: NavController) {
@@ -90,12 +75,34 @@ object Constants {
 
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-    var selectedItem by remember { mutableStateOf(Constants.BottomNavItems[0]) }
+fun BottomNavigationBar(navController: NavController, model: AppViewModel) {
+
+    val currentUser by model.currentUser.collectAsState()
+    val bottomNavItems = listOf(
+        BottomNavItem(
+            label = "Favorite",
+            icon = Icons.Filled.Favorite,
+            route = "favorite_page",
+            color = Color(0xFFEC407A)
+        ),
+        BottomNavItem(
+            label = "Home",
+            icon = Icons.Filled.Home,
+            route = "home_page",
+            color = Color(0xFF3F51B5)
+        ),
+        BottomNavItem(
+            label = "Profile",
+            icon = Icons.Filled.Person,
+            route = if (currentUser == null) "login_page" else "user_page",
+            color = Color(0xFF009688)
+        )
+    )
+    var selectedItem by remember { mutableStateOf(bottomNavItems[1]) }
     BottomNavigation(
-        backgroundColor = Color.White
+        backgroundColor = MaterialTheme.colorScheme.background
     ) {
-        Constants.BottomNavItems.forEach { navItem ->
+        bottomNavItems.forEach { navItem ->
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -107,6 +114,7 @@ fun BottomNavigationBar(navController: NavController) {
                                 launchSingleTop = true
                                 popUpTo("home_page")
                             }
+
                         },
                         indication = null,
                         interactionSource = MutableInteractionSource()
@@ -114,13 +122,17 @@ fun BottomNavigationBar(navController: NavController) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(imageVector = navItem.icon, contentDescription = navItem.label, tint = navItem.color)
+                Icon(
+                    imageVector = navItem.icon,
+                    contentDescription = navItem.label,
+                    tint = navItem.color
+                )
                 Spacer(Modifier.padding(top = 2.dp))
                 AnimatedVisibility(visible = navItem == selectedItem) {
                     Surface(
                         shape = CircleShape,
                         modifier = Modifier.size(5.dp),
-                        color =  navItem.color
+                        color = navItem.color
                     ) { }
                 }
             }
@@ -134,11 +146,9 @@ fun NavigationIcon(
     selectedItem: Int
 ) {
     val alpha = if (selectedItem != index) 0.5f else 1f
-
     CompositionLocalProvider(LocalContentAlpha provides alpha) {
         when (index) {
             0 -> Icon(Icons.Filled.Home, contentDescription = null)
-
             else -> Icon(Icons.Filled.Settings, contentDescription = null)
         }
     }

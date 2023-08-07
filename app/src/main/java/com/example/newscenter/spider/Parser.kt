@@ -1,5 +1,6 @@
 package com.example.newscenter.spider
 
+import com.example.newscenter.db.News
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -9,14 +10,14 @@ class Parser {
     private val client = HttpClient()
 
 
-    fun getNewsList(categories: List<Pair<String,String>>): List<NewsItem> {
+    fun getNewsList(categories: List<Pair<String,String>>): List<News> {
         //正则表达式提取新闻列表页的json数据
         val pattern = """data_callback[(]([\s\S]*)[)]""".toRegex()
         val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
 
         @OptIn(ExperimentalStdlibApi::class)
-        val adapter = moshi.adapter<List<NewsItem>>()
-        val newsList = mutableListOf<NewsItem>()
+        val adapter = moshi.adapter<List<News>>()
+        val newsList = mutableListOf<News>()
         for (category in categories) {
             val content = client.get(category.first, mapOf(), "GBK")
             val json = pattern.find(content)?.groupValues?.get(1)

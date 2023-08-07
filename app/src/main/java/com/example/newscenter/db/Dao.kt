@@ -10,14 +10,17 @@ import com.example.newscenter.spider.NewsItem
 
 @Dao
 interface NewsDao {
-    @Query("SELECT * FROM news")
+    @Query("SELECT * FROM news ORDER BY time DESC")
     fun getAll(): List<News>
 
     @Query("SELECT * FROM news WHERE id = :id")
     fun getById(id: Int): List<News>
+    @Query("SELECT * FROM news WHERE category = :category ORDER BY time DESC")
+    fun getByCategory(category: String): List<News>
 
-    @Update
-    fun update(vararg news: News)
+    @Query("UPDATE news SET content = :content WHERE title = :title")
+    fun update(title: String,content:String)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(vararg news: News)
 
@@ -34,7 +37,8 @@ interface UserDao {
     fun getById(id: Int): List<User>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    fun getByName(username: String):List<User>
+    fun getByName(username: String): List<User>
+
     @Insert
     fun insert(vararg user: User)
 
@@ -50,14 +54,17 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorites WHERE userId = :userId")
     fun getByUserId(userId: Int): List<Favorite>
 
-    @Query("SELECT * FROM favorites WHERE newsId = :newsId")
-    fun getByNewsId(newsId: Int): List<Favorite>
+    @Query("SELECT * FROM favorites WHERE title = :title and userId = :userId")
+    fun isUserFavor(title: String, userId: Int): List<Favorite>
 
     @Insert
     fun insert(vararg favorite: Favorite)
 
     @Delete
     fun delete(vararg favorite: Favorite)
+
+    @Query("Delete FROM favorites WHERE title = :title ")
+    fun deleteByTitle(title: String)
 }
 
 @Dao
@@ -65,8 +72,8 @@ interface HistoryDao {
     @Query("SELECT * FROM history WHERE userId = :userId ORDER BY date DESC")
     fun getByUserId(userId: Int): List<History>
 
-    @Query("SELECT * FROM history WHERE newsId = :newsId ORDER BY date DESC")
-    fun getByNewsId(newsId: Int): List<History>
+//    @Query("SELECT * FROM history WHERE newsId = :newsId ORDER BY date DESC")
+//    fun getByNewsId(newsId: Int): List<History>
 
     @Insert
     fun insert(vararg history: History)

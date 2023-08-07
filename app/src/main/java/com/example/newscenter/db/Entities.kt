@@ -17,10 +17,11 @@ import java.util.Date
 data class News(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
+    val docurl: String,
     val source: String,
     val imgurl: String,
     val time: String,
-    var category: String,
+    var category: String?,
     var content: String?,
 )
 
@@ -40,35 +41,32 @@ data class User(
 
 @Entity(
     tableName = "favorites",
-    foreignKeys = [
-        ForeignKey(entity = User::class, parentColumns = ["id"], childColumns = ["userId"]),
-        ForeignKey(entity = News::class, parentColumns = ["id"], childColumns = ["newsId"])
-    ],
     indices = [
-        Index(value = ["userId"]),
-        Index(value = ["newsId"], unique = true)
-    ]
+        Index(value = ["title","userId"], unique = true),
+    ],
 )
 data class Favorite(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val userId: Int,
-    val newsId: Int
+    val title: String,
+    val source: String,
+    val imgurl: String,
+    val time: String,
+    var category: String,
+    var content: String?,
 )
 
 @Entity(
     tableName = "history",
-    foreignKeys = [
-        ForeignKey(entity = User::class, parentColumns = ["id"], childColumns = ["userId"]),
-        ForeignKey(entity = News::class, parentColumns = ["id"], childColumns = ["newsId"])
-    ],
-    indices = [
-        Index(value = ["userId"]),
-        Index(value = ["newsId"], unique = true)
-    ]
 )
 data class History(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val userId: Int,
-    val newsId: Int,
+    val title: String,
+    val source: String,
+    val imgurl: String,
+    val time: String,
+    var category: String,
+    var content: String?,
     val date: Date = Date()
 )

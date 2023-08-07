@@ -1,16 +1,22 @@
 package com.example.newscenter.ui.page
 
-import android.annotation.SuppressLint
+
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.newscenter.db.App
-import com.example.newscenter.db.News
-import com.example.newscenter.spider.NewsItem
+import com.example.newscenter.spider.Meta
 import com.example.newscenter.spider.Spider
 import com.example.newscenter.ui.model.AppViewModel
 import com.example.newscenter.ui.view.NewsCard
@@ -19,64 +25,69 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterialApi::class)
-@SuppressLint("CoroutineCreationDuringComposition")
+
 @Composable
 fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
     val news by viewModel.newsList.collectAsState()
-    if (news.isEmpty()) {
-        val spider = Spider()
-        CoroutineScope(Dispatchers.IO).launch {
-            val tempNews = spider.getNewsList().slice(0..10)
-            tempNews.forEach() {
-                val _news = News(
+    val categorys = Meta().categorys
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    Column {
+        ScrollableTabRow(
+            selectedTabIndex = selectedTabIndex,
+            edgePadding = 16.dp
+        ) {
+            categorys.forEachIndexed { index, _categorys ->
+                Tab(
+                    text = { Text(_categorys.second) },
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index }
+                )
+            }
+        }
+        LazyColumn {
+            if (news.isEmpty()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val spider = Spider()
+                    spider.getNewsList().forEach() {
+                        App.db.newsDao().insert(it)
+                    }
+                }
+            }
+            val selected = categorys[selectedTabIndex].second
+            CoroutineScope(Dispatchers.IO).launch {
+                val _news = App.db.newsDao().getByCategory(selected)
+                withContext(Dispatchers.Main) {
+                    viewModel.setNews(_news)
+                }
+            }
+            items(news) {
+//                FavoriteCard(
+//                    imgUrl = it.imgurl,
+//                    title = it.title,
+//                    source = it.source,
+//                    category =it.category!!,
+//                ){}
+                NewsCard(
+                    imgUrl = it.imgurl,
                     title = it.title,
                     source = it.source,
                     category = it.category!!,
-                    imgurl = it.imgurl,
-                    content = it.content,
-                    time = it.time
-                )
-                App.db.newsDao().insert(_news)
-            }
-            viewModel.setNews(tempNews)
-            println(tempNews)
-        }
-    }
-    LazyColumn {
-        items(news) {
-            NewsCard(
-                imgUrl = it.imgurl,
-                title = it.title,
-                source = it.source,
-                category = it.category!!,
-                onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.changeNewsContent(it)
-                        withContext(Dispatchers.Main) {
-                            navController.navigate("news_page")
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.setNewsContent(it)
+                            withContext(Dispatchers.Main) {
+                                navController.navigate("news_page")
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
         }
-
     }
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize(),
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//    ) {
-//
-//        val permission = listOf(
-//            PMate(Manifest.permission.INTERNET, true, ""),
-//        )
-//        val pms = rememberPermissionMateState(permissions = permission)
-//        Button(onClick = {
-//            pms.start()
-//        }) {
-//            Text("主页", fontSize = 40.sp)
-//        }
-//    }
+//    val permission = listOf(
+//        PMate(Manifest.permission.INTERNET, true, "INTERNET"),
+//        PMate(Manifest.permission.LOCATION_HARDWARE, true, "LOCATION_HARDWARE"),
+//    )
+//    val pms = rememberPermissionMateState(permissions = permission)
+//    pms.start()
 }

@@ -2,13 +2,13 @@ package com.example.newscenter.spider
 
 class Meta {
     val categorys = listOf(
-        Pair("https://temp.163.com/special/00804KVA/cm_guonei.js", "中国"),
         Pair("https://temp.163.com/special/00804KVA/cm_guoji.js", "国际"),
-        Pair("https://temp.163.com/special/00804KVA/cm_war.js", "军事"),
-        Pair("https://temp.163.com/special/00804KVA/cm_money.js", "财经"),
-        Pair("https://temp.163.com/special/00804KVA/cm_sports.js", "体育"),
         Pair("https://temp.163.com/special/00804KVA/cm_tech.js", "科技"),
-        Pair("https://temp.163.com/special/00804KVA/cm_jiankang.js", "健康")
+        Pair("https://temp.163.com/special/00804KVA/cm_guonei.js", "中国"),
+        Pair("https://temp.163.com/special/00804KVA/cm_money.js", "财经"),
+        Pair("https://temp.163.com/special/00804KVA/cm_war.js", "军事"),
+        Pair("https://temp.163.com/special/00804KVA/cm_sports.js", "体育"),
+//        Pair("https://temp.163.com/special/00804KVA/cm_jiankang.js", "健康")
     )
     var political = """
         {
