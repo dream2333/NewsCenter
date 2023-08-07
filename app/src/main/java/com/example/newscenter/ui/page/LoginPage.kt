@@ -1,4 +1,5 @@
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.newscenter.R
 import com.example.newscenter.db.App
 import com.example.newscenter.ui.model.AppViewModel
 import com.example.newscenter.ui.view.SignUpDialog
@@ -39,6 +42,7 @@ fun LoginView(navController: NavHostController, model: AppViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(painter = painterResource(id = R.drawable.user_page), contentDescription = null)
         OutlinedTextField(
             value = username,
             onValueChange = {
@@ -83,8 +87,7 @@ fun LoginView(navController: NavHostController, model: AppViewModel) {
                             withContext(Dispatchers.Main) {
                                 navController.navigate("user_page")
                             }
-                        }
-                        else{
+                        } else {
                             Log.e("登录失败", users[0].toString())
                             model.closeDialog()
                         }
@@ -96,7 +99,7 @@ fun LoginView(navController: NavHostController, model: AppViewModel) {
         {
             Text("Login")
         }
-        SignUpDialog(loginViewModel = model)
+        SignUpDialog(navController = navController, loginViewModel = model)
     }
 }
 
