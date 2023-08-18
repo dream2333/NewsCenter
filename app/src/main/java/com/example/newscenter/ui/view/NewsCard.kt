@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,7 +56,9 @@ fun NewsCard(imgUrl: String, title: String, source: String, category: String, on
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .fillMaxSize()
                     .placeholder(
                         visible = downloading,
                         highlight = PlaceholderHighlight.shimmer(),

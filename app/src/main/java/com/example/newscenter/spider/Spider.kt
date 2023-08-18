@@ -18,6 +18,7 @@ class Spider {
             break
         }
     }
+
 }
 
 fun main() {

@@ -20,6 +20,7 @@ class AppViewModel : ViewModel() {
     private val _currentNews: MutableStateFlow<News?> = MutableStateFlow(null)
     private val _currentUser: MutableStateFlow<User?> = MutableStateFlow(null)
     private val _currentFavorites = MutableStateFlow(mutableListOf<Favorite?>())
+//    private val _weatherState:MutableStateFlow<String> = MutableStateFlow("")
     val newsList: StateFlow<List<News>> = _newsList.asStateFlow()
     val username: StateFlow<String> = _username.asStateFlow()
     val password: StateFlow<String> = _password.asStateFlow()

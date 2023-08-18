@@ -45,28 +45,25 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
             }
         }
         LazyColumn {
-            if (news.isEmpty()) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val spider = Spider()
-                    spider.getNewsList().forEach() {
-                        App.db.newsDao().insert(it)
-                    }
-                }
-            }
+            val isNewsEmpty = news.isEmpty()
             val selected = categorys[selectedTabIndex].second
             CoroutineScope(Dispatchers.IO).launch {
+                if (isNewsEmpty) {
+                    val spider = Spider()
+                    spider.getNewsList().forEach() {
+                        if (it.imgurl!="") {
+                            App.db.newsDao().insert(it)
+                        }
+                    }
+                }
                 val _news = App.db.newsDao().getByCategory(selected)
                 withContext(Dispatchers.Main) {
                     viewModel.setNews(_news)
                 }
             }
+
+
             items(news) {
-//                FavoriteCard(
-//                    imgUrl = it.imgurl,
-//                    title = it.title,
-//                    source = it.source,
-//                    category =it.category!!,
-//                ){}
                 NewsCard(
                     imgUrl = it.imgurl,
                     title = it.title,
