@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -76,20 +78,25 @@ data class BottomNavItem(
 
 @Composable
 fun BottomNavigationBar(navController: NavController, model: AppViewModel) {
-
     val currentUser by model.currentUser.collectAsState()
     val bottomNavItems = listOf(
-        BottomNavItem(
-            label = "Favorite",
-            icon = Icons.Filled.Favorite,
-            route = "favorite_page",
-            color = Color(0xFFEC407A)
-        ),
         BottomNavItem(
             label = "Home",
             icon = Icons.Filled.Home,
             route = "home_page",
             color = Color(0xFF3F51B5)
+        ),
+        BottomNavItem(
+            label = "Recommend",
+            icon = Icons.Filled.ThumbUp,
+            route = "recommend_page",
+            color = Color(0xFFFFB74D)
+        ),
+        BottomNavItem(
+            label = "Favorite",
+            icon = Icons.Filled.Favorite,
+            route = "favorite_page",
+            color = Color(0xFFEC407A)
         ),
         BottomNavItem(
             label = "Profile",
@@ -98,7 +105,7 @@ fun BottomNavigationBar(navController: NavController, model: AppViewModel) {
             color = Color(0xFF009688)
         )
     )
-    var selectedItem by remember { mutableStateOf(bottomNavItems[1]) }
+    var selectedItem by remember { mutableStateOf(bottomNavItems[0]) }
     BottomNavigation(
         backgroundColor = MaterialTheme.colorScheme.background
     ) {

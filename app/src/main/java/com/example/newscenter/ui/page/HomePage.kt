@@ -1,6 +1,7 @@
 package com.example.newscenter.ui.page
 
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.newscenter.db.App
@@ -30,7 +32,11 @@ import kotlinx.coroutines.withContext
 fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
     val news by viewModel.newsList.collectAsState()
     val categorys = Meta().categorys
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
+    val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
     Column {
         ScrollableTabRow(
             selectedTabIndex = selectedTabIndex,
@@ -40,7 +46,7 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
                 Tab(
                     text = { Text(_categorys.second) },
                     selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index }
+                    onClick = { viewModel.setTab(index)}
                 )
             }
         }
@@ -76,6 +82,9 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
                                 navController.navigate("news_page")
                             }
                         }
+                        val categoryName = categorys[selectedTabIndex].second
+                        val weight = sharedPreferences.getInt(categoryName, 1)
+                        editor.putInt(categoryName, weight+1).apply()
                     }
                 )
             }

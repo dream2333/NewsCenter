@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.permissionmate.compose)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.placeholder.material)
+    implementation(libs.androidx.datastore.preferences)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

@@ -3,6 +3,7 @@ package com.example.newscenter.ui.page
 
 import BottomNavigationBar
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -70,6 +71,8 @@ fun MainPage(model: AppViewModel) {
     }
     val context = LocalContext.current
     val favorDao = App.db.favoriteDao()
+    val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
     TransparentSystemBars()
     Box {
         Scaffold(
@@ -90,6 +93,7 @@ fun MainPage(model: AppViewModel) {
                     if (navVisible && currentUser != null) {
                         IconButton(onClick = {
                             CoroutineScope(Dispatchers.IO).launch {
+
                                 if (favorDao.isUserFavor(
                                         currentNewsItem!!.title,
                                         currentUser!!.id
@@ -105,6 +109,8 @@ fun MainPage(model: AppViewModel) {
                                         content = currentNewsItem!!.content
                                     )
                                     favorDao.insert(favorite)
+                                    val weight = sharedPreferences.getInt(favorite.category, 1)
+                                    editor.putInt(favorite.category, weight+3).apply()
                                     liked = true
                                     scope.launch {
                                         snackbarHostState.showSnackbar(
@@ -117,6 +123,8 @@ fun MainPage(model: AppViewModel) {
                                 } else {
                                     liked = false
                                     favorDao.deleteByTitle(currentNewsItem!!.title)
+                                    val weight = sharedPreferences.getInt(currentNewsItem!!.category, 1)
+                                    editor.putInt(currentNewsItem!!.category, weight-3).apply()
                                 }
 
                                 CoroutineScope(Dispatchers.IO).launch {
@@ -140,13 +148,14 @@ fun MainPage(model: AppViewModel) {
                                 Icon(
                                     Icons.Filled.Favorite,
                                     contentDescription = null,
-                                    tint = Color(0xFFEF5350)
+                                    tint = Color(0xFFEC407A)
                                 )
+
                             } else {
                                 Icon(
                                     Icons.Filled.FavoriteBorder,
                                     contentDescription = null,
-                                    tint = Color(0xFFEF5350)
+                                    tint = Color(0xFFEC407A)
                                 )
                             }
                         }

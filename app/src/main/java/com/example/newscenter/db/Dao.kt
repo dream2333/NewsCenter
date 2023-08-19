@@ -67,17 +67,17 @@ interface FavoriteDao {
     fun deleteByTitle(title: String)
 }
 
-@Dao
-interface HistoryDao {
-    @Query("SELECT * FROM history WHERE userId = :userId ORDER BY date DESC")
-    fun getByUserId(userId: Int): List<History>
-
-//    @Query("SELECT * FROM history WHERE newsId = :newsId ORDER BY date DESC")
-//    fun getByNewsId(newsId: Int): List<History>
-
-    @Insert
-    fun insert(vararg history: History)
-
-    @Delete
-    fun delete(vararg history: History)
-}
+//@Dao
+//interface HistoryDao {
+//    @Query("SELECT * FROM history WHERE userId = :userId ORDER BY date DESC")
+//    fun getByUserId(userId: Int): List<History>
+//
+////    @Query("SELECT * FROM history WHERE newsId = :newsId ORDER BY date DESC")
+////    fun getByNewsId(newsId: Int): List<History>
+//
+//    @Insert
+//    fun insert(vararg history: History)
+//
+//    @Delete
+//    fun delete(vararg history: History)
+//}

@@ -70,8 +70,8 @@ fun FavoriteCard(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        start= Offset(0f, 500f),
-                        end= Offset(0f, 100f),
+                        start= Offset(0f, 900f),
+                        end= Offset(0f, 200f),
                         colors = listOf(
                             Color.Black,
                             Color(0x00000000),

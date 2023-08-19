@@ -17,11 +17,11 @@ class Converters {
         return date?.time
     }
 }
-@Database(entities = [News::class, User::class, Favorite::class, History::class], version = 1)
+@Database(entities = [News::class, User::class, Favorite::class, Category::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun newsDao(): NewsDao
     abstract fun userDao(): UserDao
     abstract fun favoriteDao(): FavoriteDao
-    abstract fun historyDao(): HistoryDao
+
 }

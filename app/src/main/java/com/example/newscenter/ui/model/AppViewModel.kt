@@ -20,6 +20,10 @@ class AppViewModel : ViewModel() {
     private val _currentNews: MutableStateFlow<News?> = MutableStateFlow(null)
     private val _currentUser: MutableStateFlow<User?> = MutableStateFlow(null)
     private val _currentFavorites = MutableStateFlow(mutableListOf<Favorite?>())
+    private val _selectedTabIndex = MutableStateFlow(0)
+    private val _recommends = MutableStateFlow(mutableListOf<News>())
+    val recommends: StateFlow<List<News>> = _recommends.asStateFlow()
+    val selectedTabIndex: StateFlow<Int> = _selectedTabIndex.asStateFlow()
 //    private val _weatherState:MutableStateFlow<String> = MutableStateFlow("")
     val newsList: StateFlow<List<News>> = _newsList.asStateFlow()
     val username: StateFlow<String> = _username.asStateFlow()
@@ -70,5 +74,12 @@ class AppViewModel : ViewModel() {
 
     fun setFavorContent(news: News) {
         _currentNews.value = news
+    }
+
+    fun setTab(tabIndex: Int) {
+        _selectedTabIndex.value = tabIndex
+    }
+    fun addRecommends(items:List<News>) {
+        _recommends.value.addAll(items)
     }
 }

@@ -21,6 +21,7 @@ coil-compose = "2.4.0"
 accompanist-permissions = "0.31.5-beta"
 permissionmate-compose = "1.1"
 accompanist-placeholder-material = "0.31.5-beta"
+datastore-preferences = "1.1.0-alpha04"
 
 [libraries]
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room-runtime" }
@@ -54,6 +55,7 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 utils = { module = "com.github.dawidraszka.compose-permission-handler:utils", version.ref = "core" }
 permissionmate-compose = { group = "io.github.farimarwat", name = "permissionmate-compose", version.ref = "permissionmate-compose" }
 accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist-placeholder-material" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-preferences" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
