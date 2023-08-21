@@ -6,9 +6,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.navigation.NavHostController
+import com.example.newscenter.R
 import com.example.newscenter.db.App
 import com.example.newscenter.db.User
 import com.example.newscenter.ui.model.AppViewModel
@@ -31,11 +33,7 @@ fun SignUpDialog(navController: NavHostController, loginViewModel: AppViewModel)
             },
             title = { Text(text = "Sign Up") },
             //显示有关对话框目的的详细信息的文本。提供的文本样式默认为 Typography.body1
-            text = {
-                Text(
-                    "This account has not yet registered, register now?"
-                )
-            },
+            text = { Text(stringResource(id = R.string.register_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -48,11 +46,8 @@ fun SignUpDialog(navController: NavHostController, loginViewModel: AppViewModel)
                                 navController.navigate("user_page")
                             }
                         }
-
                     }
-                ) {
-                    Text("Yes")
-                }
+                ) { Text("Yes") }
             },
             //用于关闭对话框的按钮。该对话框不会为此按钮设置任何事件，因此它们需要由调用者设置,null则不显示
             dismissButton = {
@@ -64,7 +59,6 @@ fun SignUpDialog(navController: NavHostController, loginViewModel: AppViewModel)
                     Text("No")
                 }
             },
-
             properties = DialogProperties(
                 //是否可以通过按下后退按钮来关闭对话框。 如果为 true，按下后退按钮将调用 onDismissRequest。
                 dismissOnBackPress = true,

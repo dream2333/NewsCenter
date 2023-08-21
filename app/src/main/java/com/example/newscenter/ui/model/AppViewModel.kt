@@ -5,7 +5,6 @@ import com.example.newscenter.db.App
 import com.example.newscenter.db.Favorite
 import com.example.newscenter.db.News
 import com.example.newscenter.db.User
-import com.example.newscenter.spider.NewsItem
 import com.example.newscenter.spider.Parser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +41,7 @@ class AppViewModel : ViewModel() {
         _password.value = msg
     }
 
-    fun onUserChange(user: User) {
+    fun onUserChange(user: User?) {
         _currentUser.value = user
     }
 

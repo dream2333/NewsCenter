@@ -1,11 +1,9 @@
-package com.example.newscenter.ui.page
+package com.example.newscenter
 
 
 import BottomNavigationBar
-import android.annotation.SuppressLint
+import android.Manifest
 import android.content.Context
-import android.content.Intent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -14,9 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -27,7 +23,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,22 +34,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
-import com.example.newscenter.Navigation
 import com.example.newscenter.db.App
 import com.example.newscenter.ui.model.AppViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import com.example.newscenter.db.Favorite
+import com.example.newscenter.ui.view.ShareButton
 import com.example.newscenter.ui.view.TransparentSystemBars
 import com.example.newscenter.ui.view.WeatherView
+import com.farimarwat.permissionmate.PMate
+import com.farimarwat.permissionmate.rememberPermissionMateState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-@SuppressLint("CoroutineCreationDuringComposition")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(model: AppViewModel) {
@@ -90,10 +86,10 @@ fun MainPage(model: AppViewModel) {
                         }
                     }
                 }, actions = {
+                    //右上角按钮，此处逻辑较为复杂，需要判断是否登录，是否已经收藏，修改权重
                     if (navVisible && currentUser != null) {
                         IconButton(onClick = {
                             CoroutineScope(Dispatchers.IO).launch {
-
                                 if (favorDao.isUserFavor(
                                         currentNewsItem!!.title,
                                         currentUser!!.id
@@ -110,7 +106,7 @@ fun MainPage(model: AppViewModel) {
                                     )
                                     favorDao.insert(favorite)
                                     val weight = sharedPreferences.getInt(favorite.category, 1)
-                                    editor.putInt(favorite.category, weight+3).apply()
+                                    editor.putInt(favorite.category, weight + 3).apply()
                                     liked = true
                                     scope.launch {
                                         snackbarHostState.showSnackbar(
@@ -123,8 +119,9 @@ fun MainPage(model: AppViewModel) {
                                 } else {
                                     liked = false
                                     favorDao.deleteByTitle(currentNewsItem!!.title)
-                                    val weight = sharedPreferences.getInt(currentNewsItem!!.category, 1)
-                                    editor.putInt(currentNewsItem!!.category, weight-3).apply()
+                                    val weight =
+                                        sharedPreferences.getInt(currentNewsItem!!.category, 1)
+                                    editor.putInt(currentNewsItem!!.category, weight - 3).apply()
                                 }
 
                                 CoroutineScope(Dispatchers.IO).launch {
@@ -137,11 +134,13 @@ fun MainPage(model: AppViewModel) {
                             }
                         }) {
                             if (currentNewsItem != null) {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    liked = favorDao.isUserFavor(
-                                        currentNewsItem!!.title,
-                                        currentUser!!.id
-                                    ).isNotEmpty()
+                                LaunchedEffect(Unit) {
+                                    withContext(Dispatchers.IO) {
+                                        liked = favorDao.isUserFavor(
+                                            currentNewsItem!!.title,
+                                            currentUser!!.id
+                                        ).isNotEmpty()
+                                    }
                                 }
                             }
                             if (liked) {
@@ -163,23 +162,11 @@ fun MainPage(model: AppViewModel) {
                     if (!navVisible) {
                         WeatherView()
                     }
-
                 })
             },
             floatingActionButton = { /*悬浮按钮*/
                 if (fabVisible) {
-                    FloatingActionButton(modifier = Modifier.zIndex(10000f), onClick = {
-                        val intent = Intent()
-                        intent.setAction(Intent.ACTION_SEND)
-                        intent.putExtra(Intent.EXTRA_TEXT, currentNewsItem?.docurl)
-                        intent.setType("text/plain")
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.applicationContext.startActivity(intent)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Share, contentDescription = "share"
-                        )
-                    }
+                    ShareButton(currentNewsItem!!.docurl)
                 }
             },
             content = { padding ->
@@ -197,5 +184,17 @@ fun MainPage(model: AppViewModel) {
                 .align(Alignment.BottomCenter)
         )
     }
+    if (sharedPreferences.getBoolean("first_start", true)) {
+        val locationMessage = stringResource(id = R.string.location_message)
+        val permission = listOf(
+            PMate(Manifest.permission.INTERNET, true, "INTERNET"),
+            PMate(Manifest.permission.LOCATION_HARDWARE, true, locationMessage),
+        )
+        val pms = rememberPermissionMateState(permissions = permission)
+        pms.start()
+        editor.putBoolean("first_start", false).apply()
+    }
+
 }
+
 

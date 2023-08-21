@@ -13,28 +13,28 @@ import com.example.newscenter.ui.page.RecommendPage
 import com.example.newscenter.ui.page.UserPage
 
 @Composable
-fun Navigation(navController:NavHostController, appViewModel: AppViewModel) {
+fun Navigation(navController: NavHostController, appViewModel: AppViewModel) {
     NavHost(
         navController = navController,
         startDestination = "home_page"
     ) {
         composable("home_page") {
-            HomePage(navController,appViewModel)
+            HomePage(navController, appViewModel)
         }
         composable("recommend_page") {
-            RecommendPage(navController,appViewModel)
+            RecommendPage(navController, appViewModel)
         }
         composable("login_page") {
-            LoginView(navController,appViewModel)
+            LoginView(navController, appViewModel)
         }
         composable("favorite_page") {
-            FavoritePage(navController,appViewModel)
+            FavoritePage(navController, appViewModel)
         }
         composable("news_page") {
             NewsPage(appViewModel)
         }
         composable("user_page") {
-            UserPage(appViewModel)
+            UserPage(navController, appViewModel)
         }
     }
 }

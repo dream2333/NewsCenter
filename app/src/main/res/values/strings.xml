@@ -2,4 +2,7 @@
     <string name="app_name">NewsCenter</string>
     <string name="username_input">Username</string>
     <string name="password_input">Password</string>
+    <string name="location_message">We need to access your location information to provide you with more accurate weather data. If you do not allow access to your location information, we will use network location to obtain your approximate location. Please note that network location may not be as accurate, so we recommend that you allow access to your location information for a better experience. We will not use your location information for any other purpose.</string>
+    <string name="register_message">"This account has not yet registered, register now?"</string>
+    <string name="password_wrong">"Password is wrong!"</string>
 </resources>

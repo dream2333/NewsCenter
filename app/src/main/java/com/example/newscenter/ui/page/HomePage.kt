@@ -11,9 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -46,7 +43,7 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
                 Tab(
                     text = { Text(_categorys.second) },
                     selected = selectedTabIndex == index,
-                    onClick = { viewModel.setTab(index)}
+                    onClick = { viewModel.setTab(index) }
                 )
             }
         }
@@ -57,7 +54,7 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
                 if (isNewsEmpty) {
                     val spider = Spider()
                     spider.getNewsList().forEach() {
-                        if (it.imgurl!="") {
+                        if (it.imgurl != "") {
                             App.db.newsDao().insert(it)
                         }
                     }
@@ -84,16 +81,10 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
                         }
                         val categoryName = categorys[selectedTabIndex].second
                         val weight = sharedPreferences.getInt(categoryName, 1)
-                        editor.putInt(categoryName, weight+1).apply()
+                        editor.putInt(categoryName, weight + 1).apply()
                     }
                 )
             }
         }
     }
-//    val permission = listOf(
-//        PMate(Manifest.permission.INTERNET, true, "INTERNET"),
-//        PMate(Manifest.permission.LOCATION_HARDWARE, true, "LOCATION_HARDWARE"),
-//    )
-//    val pms = rememberPermissionMateState(permissions = permission)
-//    pms.start()
 }
