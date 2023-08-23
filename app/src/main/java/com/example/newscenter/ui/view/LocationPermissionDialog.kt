@@ -1,4 +1,5 @@
 import android.Manifest
+import android.content.Context
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -8,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -18,6 +20,9 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationPermissionDialog(onAllSuccess: () -> Unit) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("weather", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
     val locationPermissionsState = rememberMultiplePermissionsState(
         listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -28,8 +33,9 @@ fun LocationPermissionDialog(onAllSuccess: () -> Unit) {
         mutableStateOf(true)
     }
     if (locationPermissionsState.allPermissionsGranted) {
+        editor.putBoolean("allLocationPermissionDone", true).apply()
         onAllSuccess()
-    } else if (showDialog) {
+    } else if (showDialog && !sharedPreferences.getBoolean("allLocationPermissionDone", false)) {
         val allPermissionsRevoked =
             locationPermissionsState.permissions.size ==
                     locationPermissionsState.revokedPermissions.size

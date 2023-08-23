@@ -62,7 +62,7 @@ fun MainPage(model: AppViewModel) {
     }
     val context = LocalContext.current
     val favorDao = App.db.favoriteDao()
-    val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences("recommend", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
 
     TransparentSystemBars()
@@ -157,7 +157,7 @@ fun MainPage(model: AppViewModel) {
                         }
                     }
                     if (!navVisible) {
-                        WeatherView()
+                        WeatherView(model)
                     }
                 })
             },
