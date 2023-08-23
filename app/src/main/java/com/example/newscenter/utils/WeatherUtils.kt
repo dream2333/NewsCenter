@@ -1,11 +1,13 @@
-package com.example.newscenter.spider
+package com.example.newscenter.utils
 
+import androidx.compose.ui.graphics.Color
+import com.example.newscenter.R
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
 import java.nio.charset.Charset
 
-class Weather {
+class WeatherUtils {
     private val client = OkHttpClient()
     fun getIp():String{
         val url = "https://ip.useragentinfo.com/json"
@@ -21,8 +23,8 @@ class Weather {
             return pattern.find(text)?.groupValues?.get(1)!!
         }
     }
-    fun getWeather(ip:String):Pair<String,String> {
-        val api = "http://api.weatherapi.com/v1/current.json?key=f5a89dc68c0645b58aa70038231808&q=${ip}&aqi=no"
+    fun getWeather(queryStr:String):Pair<String,WeatherIcon> {
+        val api = "http://api.weatherapi.com/v1/current.json?key=f5a89dc68c0645b58aa70038231808&q=$queryStr&aqi=no"
         val request = Request.Builder()
             .url(api)
             .build()
@@ -35,7 +37,34 @@ class Weather {
             val text = String(b, Charset.forName("utf-8"))
             val temperture = patternTemp.find(text)?.groupValues?.get(1)!!
             val code = patternCode.find(text)?.groupValues?.get(1)!!
-            return Pair(temperture,code)
+            val icon = getWeatherIcon(code)
+            return Pair(temperture,icon)
+        }
+    }
+
+    fun getWeatherIcon(code:String):WeatherIcon{
+        return when (code) {
+            "1000" -> {
+                WeatherIcon(R.drawable.weather_sunny, Color(0xFFFFD54F))
+            }
+
+            "1003" -> {
+                WeatherIcon(R.drawable.weaather_cloudy, Color(0xFFC2C2C2))
+            }
+
+            "1183" -> {
+                WeatherIcon(R.drawable.weather_rainy, Color(0xFF82ADE2))
+            }
+            else -> {
+                WeatherIcon(R.drawable.weather_sunny, Color(0xFFFFD54F))
+            }
         }
     }
 }
+
+data class WeatherIcon(
+    val icon: Int,
+    val color: Color,
+)
+
+

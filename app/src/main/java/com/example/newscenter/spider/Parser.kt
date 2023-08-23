@@ -38,8 +38,7 @@ class Parser {
         val html = client.get(mobileUrl, mapOf(), "utf-8")
         val doc = Jsoup.parse(html)
         val xpathContent = "//section[@class='article-body js-article-body']/p[@id]"
-        val content = doc.selectXpath(xpathContent).eachText().joinToString("\n\n")
-        return content
+        return doc.selectXpath(xpathContent).eachText().joinToString("\n\n")
     }
 
     fun getRecommend(url: String): List<String> {
@@ -47,8 +46,7 @@ class Parser {
         val html = client.get(mobileUrl, mapOf(), "utf-8")
         val doc = Jsoup.parse(html)
         val xpathRecommend = "//div[@class='recommend']/div[@class='list']/ul/li/a"
-        val recommend = doc.selectXpath(xpathRecommend).eachAttr("href")
-        return recommend
+        return doc.selectXpath(xpathRecommend).eachAttr("href")
     }
 
 }

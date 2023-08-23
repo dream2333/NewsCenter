@@ -53,7 +53,7 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
             CoroutineScope(Dispatchers.IO).launch {
                 if (isNewsEmpty) {
                     val spider = Spider()
-                    spider.getNewsList().forEach() {
+                    spider.getNewsList().forEach {
                         if (it.imgurl != "") {
                             App.db.newsDao().insert(it)
                         }

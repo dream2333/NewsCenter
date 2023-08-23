@@ -5,7 +5,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 
-//一个全局单例数据库对象，生命周期围绕app
+
 class App:Application() {
     companion object {
         lateinit var db: AppDatabase
