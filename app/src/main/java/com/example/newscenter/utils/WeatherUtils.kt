@@ -35,10 +35,10 @@ class WeatherUtils {
             val patternTemp = "\"temp_c\":(.*?),".toRegex()
             val patternCode = "\"code\":(.*?),".toRegex()
             val text = String(b, Charset.forName("utf-8"))
-            val temperture = patternTemp.find(text)?.groupValues?.get(1)!!
+            val temperature = patternTemp.find(text)?.groupValues?.get(1)!!
             val code = patternCode.find(text)?.groupValues?.get(1)!!
             val icon = getWeatherIcon(code)
-            return Pair(temperture,icon)
+            return Pair(temperature,icon)
         }
     }
 
