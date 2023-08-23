@@ -2,7 +2,6 @@ package com.example.newscenter
 
 
 import BottomNavigationBar
-import LocationPermissionDialog
 import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding

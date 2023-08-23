@@ -1,17 +1,12 @@
 package com.example.newscenter.utils
 
-import android.Manifest
+
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import androidx.core.app.ActivityCompat
-import java.io.IOException
-import java.util.Locale
+
 
 class LocationUtils
 private constructor(private val mContext: Context) {
@@ -34,9 +29,9 @@ private constructor(private val mContext: Context) {
         // 定位管理初始化
         mLocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         // 通过GPS定位
-        val gpsProvider = mLocationManager!!.getProvider(LocationManager.GPS_PROVIDER)
+        val gpsProvider = mLocationManager!!.getProviderProperties(LocationManager.GPS_PROVIDER)
         // 通过网络定位
-        val netProvider = mLocationManager!!.getProvider(LocationManager.NETWORK_PROVIDER)
+        val netProvider = mLocationManager!!.getProviderProperties(LocationManager.NETWORK_PROVIDER)
         // 优先考虑GPS定位，其次网络定位。
         if (gpsProvider != null) {
             gpsLocation()
