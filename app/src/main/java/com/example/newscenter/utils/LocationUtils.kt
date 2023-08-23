@@ -98,9 +98,6 @@ private constructor(private val mContext: Context) {
         // 网络定位
         private const val NETWORK_LOCATION = LocationManager.NETWORK_PROVIDER
 
-        // 解码经纬度最大结果数目
-        private const val MAX_RESULTS = 1
-
         // 时间更新间隔，单位：ms
         private const val MIN_TIME: Long = 1000
 
