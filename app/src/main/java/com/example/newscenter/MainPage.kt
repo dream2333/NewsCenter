@@ -2,10 +2,9 @@ package com.example.newscenter
 
 
 import BottomNavigationBar
-import android.Manifest
+import LocationPermissionDialog
 import android.content.Context
 import androidx.compose.foundation.layout.Box
-
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
 import com.example.newscenter.db.App
 import com.example.newscenter.ui.model.AppViewModel
@@ -43,8 +41,6 @@ import com.example.newscenter.db.Favorite
 import com.example.newscenter.ui.view.ShareButton
 import com.example.newscenter.ui.view.TransparentSystemBars
 import com.example.newscenter.ui.view.WeatherView
-import com.farimarwat.permissionmate.PMate
-import com.farimarwat.permissionmate.rememberPermissionMateState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -69,7 +65,9 @@ fun MainPage(model: AppViewModel) {
     val favorDao = App.db.favoriteDao()
     val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
+
     TransparentSystemBars()
+
     Box {
         Scaffold(
             topBar = { /*标题栏*/
@@ -184,17 +182,6 @@ fun MainPage(model: AppViewModel) {
                 .align(Alignment.BottomCenter)
         )
     }
-    if (sharedPreferences.getBoolean("first_start", true)) {
-        val locationMessage = stringResource(id = R.string.location_message)
-        val permission = listOf(
-            PMate(Manifest.permission.INTERNET, true, "INTERNET"),
-            PMate(Manifest.permission.LOCATION_HARDWARE, true, locationMessage),
-        )
-        val pms = rememberPermissionMateState(permissions = permission)
-        pms.start()
-        editor.putBoolean("first_start", false).apply()
-    }
-
 }
 
 
