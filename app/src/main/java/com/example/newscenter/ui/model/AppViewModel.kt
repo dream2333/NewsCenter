@@ -83,6 +83,12 @@ class AppViewModel : ViewModel() {
         _recommends.value.addAll(items)
     }
 
+    fun clearRecommends() {
+        _recommends.value.clear()
+    }
+    fun shuffleRecommends() {
+        _recommends.value.shuffle()
+    }
     fun setTemperature(temp:String){
         _temperature.value = temp
     }

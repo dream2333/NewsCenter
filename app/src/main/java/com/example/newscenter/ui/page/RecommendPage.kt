@@ -1,6 +1,7 @@
 package com.example.newscenter.ui.page
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +31,12 @@ fun RecommendPage(navController: NavHostController, model: AppViewModel) {
     val recommends by model.recommends.collectAsState()
     val currentUser by model.currentUser.collectAsState()
     val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    //    没有登录则按照游客推荐
+    var username = "anonymous"
+    if (currentUser != null) {
+        username = currentUser!!.username
+    }
+    val sharedPreferences = context.getSharedPreferences("${username}_prefs", Context.MODE_PRIVATE)
     val categorys = arrayOf(
         "科技",
         "国际",
@@ -38,8 +44,9 @@ fun RecommendPage(navController: NavHostController, model: AppViewModel) {
         "中国",
         "财经",
     )
-//    如果没有推荐过，就按照权重随机推荐
-    if (recommends.isEmpty()) {
+    //    没有推荐权重的分类，按照权重1随机推荐
+    //    有推荐权重的分类，按照权重随机推荐
+    if (recommends.isEmpty() && currentUser != null) {
         var totalWeight = 0
         categorys.forEach { category ->
             totalWeight += sharedPreferences.getInt(category, 1)
@@ -49,10 +56,15 @@ fun RecommendPage(navController: NavHostController, model: AppViewModel) {
                 categorys.forEach { category ->
                     val newsList = App.db.newsDao().getByCategory(category).shuffled()
                     val weight = sharedPreferences.getInt(category, 1)
-                    val length = weight * newsList.size / totalWeight
+                    val length = weight * 20 / totalWeight
                     //添加随机推荐
-                    model.addRecommends(newsList.subList(0, length))
+                    val tempRecommends = newsList.subList(0, length)
+                    model.addRecommends(tempRecommends)
                 }
+//                Log.i("recommends",recommends.toString())
+                Log.i("recommends",totalWeight.toString())
+                model.shuffleRecommends()
+
             }
         }
     }

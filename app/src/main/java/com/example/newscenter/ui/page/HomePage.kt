@@ -31,8 +31,15 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
     val categorys = Meta().categorys
     val context = LocalContext.current
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
-    val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    val currentUser by viewModel.currentUser.collectAsState()
+    var username = "anonymous"
+    if (currentUser != null) {
+        username = currentUser!!.username
+    }
+    val sharedPreferences =
+        context.getSharedPreferences("${username}_prefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
+
 
     Column {
         ScrollableTabRow(
@@ -80,8 +87,10 @@ fun HomePage(navController: NavHostController, viewModel: AppViewModel) {
                             }
                         }
                         val categoryName = categorys[selectedTabIndex].second
-                        val weight = sharedPreferences.getInt(categoryName, 1)
-                        editor.putInt(categoryName, weight + 1).apply()
+                        if (currentUser != null) {
+                            val weight = sharedPreferences.getInt(categoryName, 1)
+                            editor.putInt(categoryName, weight + 1).apply()
+                        }
                     }
                 )
             }

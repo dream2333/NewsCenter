@@ -50,8 +50,9 @@ fun LoginView(navController: NavHostController, model: AppViewModel) {
     val maxLength = 36
     var errorDialogState by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(500) // 延迟 500ms 清空
+        delay(1000) // 延迟 500ms 清空
         model.onUserChange(null)
+        model.clearRecommends()
     }
     if (errorDialogState) {
         AlertDialog(

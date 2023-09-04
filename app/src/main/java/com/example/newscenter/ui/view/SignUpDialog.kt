@@ -1,12 +1,26 @@
 package com.example.newscenter.ui.view
 
+import android.content.Context
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.navigation.NavHostController
@@ -19,6 +33,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+val datas = mutableListOf(
+    "科技",
+    "国际",
+    "体育",
+    "中国",
+    "财经",
+)
+
 
 @Composable
 fun SignUpDialog(navController: NavHostController, loginViewModel: AppViewModel) {
@@ -26,6 +48,9 @@ fun SignUpDialog(navController: NavHostController, loginViewModel: AppViewModel)
     val username by loginViewModel.username.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val userDao = App.db.userDao()
+    var hasShow by remember { mutableStateOf(false) }
+    var selectedCategoryName: String? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
     if (dialogState) {
         AlertDialog(
             onDismissRequest = {
@@ -33,7 +58,42 @@ fun SignUpDialog(navController: NavHostController, loginViewModel: AppViewModel)
             },
             title = { Text(text = "Sign Up") },
             //显示有关对话框目的的详细信息的文本。提供的文本样式默认为 Typography.body1
-            text = { Text(stringResource(id = R.string.register_message)) },
+            text = {
+                Column {
+                    Text(stringResource(id = R.string.register_message))
+                    Spacer(modifier = Modifier.padding(12.dp))
+                    Button(onClick = { hasShow = true }) {
+                        if (selectedCategoryName != null) {
+                            Text(text = "Default Category: $selectedCategoryName")
+                        } else {
+                            Text(text = "Select Default Favorite Category")
+                        }
+                    }
+//                  此处对新账号的用户推荐进行加权处理，对用户选择的默认偏好加权5
+                    DropdownMenu(
+                        expanded = hasShow,
+                        onDismissRequest = {
+                            hasShow = false
+                        },
+                        modifier = Modifier.width(100.dp)
+                    ) {
+                        datas.forEach {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = it, modifier = Modifier.padding(start = 10.dp))
+                                },
+                                onClick = {
+                                    hasShow = false
+                                    selectedCategoryName = it
+                                    val sharedPreferences =
+                                        context.getSharedPreferences("${username}_prefs", Context.MODE_PRIVATE)
+                                    val editor = sharedPreferences.edit()
+                                    editor.putInt(selectedCategoryName, 10).apply()
+                                })
+                        }
+                    }
+                }
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
